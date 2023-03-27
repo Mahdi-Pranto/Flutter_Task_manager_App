@@ -1,48 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:mytodoapp/constraints/colors.dart';
+import 'package:mytodoapp/model/todo.dart';
 import 'package:mytodoapp/screens/todo_item.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  Home({super.key});
+
+  final todosList = ToDo.todoList();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tdBGColor,
-      drawer: Drawer(
+      drawer: const Drawer(
         child: Text("this is drawer"),
       ),
       appBar: _buildAppBar(),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: ListView(
-          children: [
-            searchBox(),
-            Container(
-              margin: EdgeInsets.only(top: 50, bottom: 20),
-              child: Text("All ToDos",
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+      body: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: ListView(
+              children: [
+                searchBox(),
+                Container(
+                  margin: const EdgeInsets.only(top: 50, bottom: 20),
+                  child: const Text("All ToDos",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
+                ),
+                for (ToDo todo in todosList)
+                  TodoItem(
+                    todo: todo,
+                  ),
+              ],
             ),
-            const TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-            TodoItem(),
-          ],
-        ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              children: [
+                Expanded(
+                    child: Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.grey,
+                          offset: Offset(0.0, 0.0),
+                          blurRadius: 10.0,
+                          spreadRadius: 0.0),
+                    ],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Add what task you want to do today",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                )),
+                Container(
+                  margin: EdgeInsets.only(bottom: 20, right: 20),
+                  child: ElevatedButton(
+                    child: Text(
+                      "+",
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: tdBlue,
+                        minimumSize: Size(60, 60),
+                        elevation: 10),
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -93,7 +135,7 @@ Widget searchBox() {
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
     ),
-    child: TextField(
+    child: const TextField(
       decoration: InputDecoration(
           hintText: "Search",
           contentPadding: EdgeInsets.all(0),
