@@ -3,9 +3,15 @@ import 'package:mytodoapp/constraints/colors.dart';
 import 'package:mytodoapp/model/todo.dart';
 import 'package:mytodoapp/screens/todo_item.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool changedButton = false;
   final todosList = ToDo.todoList();
 
   @override
@@ -67,16 +73,22 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 )),
-                Container(
+                AnimatedContainer(
+                  duration: Duration(seconds: 1),
                   margin: EdgeInsets.only(bottom: 20, right: 20),
                   child: ElevatedButton(
-                    child: Text(
-                      "+",
-                      style: TextStyle(fontSize: 40),
+                    child: Icon(
+                      changedButton ? Icons.check : Icons.add,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      setState(() {
+                        changedButton = true;
+                      });
+                    },
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: tdBlue,
+                        backgroundColor: changedButton
+                            ? Color.fromARGB(255, 6, 241, 18)
+                            : tdBlue,
                         minimumSize: Size(60, 60),
                         elevation: 10),
                   ),
@@ -129,8 +141,8 @@ class Home extends StatelessWidget {
 
 Widget searchBox() {
   return Container(
-    margin: EdgeInsets.only(top: 30),
-    padding: EdgeInsets.symmetric(horizontal: 20),
+    margin: const EdgeInsets.only(top: 30),
+    padding: const EdgeInsets.symmetric(horizontal: 20),
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(20),
