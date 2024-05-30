@@ -9,7 +9,7 @@ class TodoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 20),
       child: ListTile(
         onTap: () {},
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -17,7 +17,7 @@ class TodoItem extends StatelessWidget {
             todo.isDone! ? Icons.check_box : Icons.check_box_outline_blank,
             color: tdBlue),
         tileColor: Colors.white,
-        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         title: Text(
           todo.todoText!,
           style: TextStyle(
@@ -30,7 +30,7 @@ class TodoItem extends StatelessWidget {
           child: IconButton(
             color: tdRed,
             iconSize: 30,
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {},
           ),
         ),

@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
                 searchBox(),
                 Container(
                   margin: const EdgeInsets.only(top: 50, bottom: 20),
-                  child: const Text("All ToDos",
+                  child: const Text("All Tasks",
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
                 ),
@@ -66,20 +66,17 @@ class _HomeState extends State<Home> {
                     ],
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: TextField(
+                  child: const TextField(
                     decoration: InputDecoration(
-                      hintText: "Add what task you want to do today",
+                      hintText: "Add task for today",
                       border: InputBorder.none,
                     ),
                   ),
                 )),
                 AnimatedContainer(
-                  duration: Duration(seconds: 1),
-                  margin: EdgeInsets.only(bottom: 20, right: 20),
+                  duration: const Duration(seconds: 1),
+                  margin: const EdgeInsets.only(bottom: 20, right: 20),
                   child: ElevatedButton(
-                    child: Icon(
-                      changedButton ? Icons.check : Icons.add,
-                    ),
                     onPressed: () async {
                       setState(() {
                         changedButton = true;
@@ -87,10 +84,13 @@ class _HomeState extends State<Home> {
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: changedButton
-                            ? Color.fromARGB(255, 6, 241, 18)
+                            ? const Color.fromARGB(255, 6, 241, 18)
                             : tdBlue,
-                        minimumSize: Size(60, 60),
+                        minimumSize: const Size(60, 60),
                         elevation: 10),
+                    child: Icon(
+                      changedButton ? Icons.check : Icons.add,
+                    ),
                   ),
                 )
               ],
@@ -103,35 +103,15 @@ class _HomeState extends State<Home> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      // backgroundColor: tdBGColor,
-      // title: Row(
-      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //   children: [
-      //     Icon(
-      //       Icons.menu,
-      //       color: tdBlack,
-      //       size: 30,
-      //     ),
-      //     Container(
-
-      //       height: 40,
-      //       width: 40,
-      //       child: ClipRRect(
-      //         child: Image.asset("assets/images/avatar.png"),
-      //         borderRadius: BorderRadius.circular(20),
-      //       ),
-      //     )
-      //   ],
-      // ),
-
+      backgroundColor: tdBGColor,
       automaticallyImplyLeading: true,
       actions: [
         Container(
           height: 40,
           width: 40,
           child: ClipRRect(
-            child: Image.asset("assets/images/avatar.png"),
             borderRadius: BorderRadius.circular(20),
+            child: Image.asset("assets/images/avatar.png"),
           ),
         ),
       ],
