@@ -23,27 +23,39 @@ class TodoItem extends StatelessWidget {
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         leading: Icon(
-            todo.isDone! ? Icons.check_box : Icons.check_box_outline_blank,
-            color: tdBlue),
+          todo.isDone! ? Icons.check_box : Icons.check_box_outline_blank,
+          color: tdBlue,
+        ),
         tileColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-        title: Text(
-          todo.todoText!,
-          style: TextStyle(
-            fontSize: 16,
-            color: tdBlack,
-            decoration: todo.isDone! ? TextDecoration.lineThrough : null,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              todo.todoText!,
+              style: TextStyle(
+                fontSize: 16,
+                color: tdBlack,
+                decoration: todo.isDone! ? TextDecoration.lineThrough : null,
+              ),
+            ),
+            if (todo.taskTime != null)
+              Text(
+                'Time: ${todo.taskTime!.format(context)}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
         ),
-        trailing: Container(
-          child: IconButton(
-            color: tdRed,
-            iconSize: 30,
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              onDeleteItem(todo.id!);
-            },
-          ),
+        trailing: IconButton(
+          color: tdRed,
+          iconSize: 30,
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            onDeleteItem(todo.id!);
+          },
         ),
       ),
     );

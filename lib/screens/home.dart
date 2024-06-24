@@ -11,17 +11,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool showInputField = false;
   final todosList = ToDo.todoList();
   final TextEditingController _taskController = TextEditingController();
+  TimeOfDay? _selectedTime;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tdBGColor,
-      drawer: const Drawer(
-        child: Text("this is drawer"),
-      ),
+      drawer: appSidebar(),
       appBar: _buildAppBar(),
       body: Stack(
         children: [
@@ -29,14 +27,12 @@ class _HomeState extends State<Home> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ListView(
               children: [
-                // searchBox(),
+                searchBox(),
                 Container(
                   margin: const EdgeInsets.only(top: 10, bottom: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        showInputField = !showInputField;
-                      });
+                      _showAddTaskDialog(context);
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -46,60 +42,11 @@ class _HomeState extends State<Home> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.add),
-                        Text("Add Task"),
+                        Text("Add New Task"),
                       ],
                     ),
                   ),
                 ),
-                if (showInputField)
-                  Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 20,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0.0, 0.0),
-                            blurRadius: 10.0,
-                            spreadRadius: 0.0),
-                      ],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _taskController,
-                            decoration: const InputDecoration(
-                              hintText: "Add task for today",
-                              border: InputBorder.none,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.check),
-                          color: tdBlue,
-                          onPressed: () {
-                            setState(() {
-                              if (_taskController.text.isNotEmpty) {
-                                todosList.add(ToDo(
-                                    id: DateTime.now()
-                                        .millisecondsSinceEpoch
-                                        .toString(),
-                                    todoText: _taskController.text));
-                                _taskController.clear();
-                                showInputField = false;
-                              }
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                  ),
                 Container(
                   margin: const EdgeInsets.only(top: 20, bottom: 20),
                   child: const Text("All Tasks",
@@ -138,7 +85,7 @@ class _HomeState extends State<Home> {
       backgroundColor: tdBGColor,
       automaticallyImplyLeading: true,
       actions: [
-        Container(
+        SizedBox(
           height: 40,
           width: 40,
           child: ClipRRect(
@@ -149,6 +96,118 @@ class _HomeState extends State<Home> {
       ],
     );
   }
+
+  void _showAddTaskDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Add New Task"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _taskController,
+                decoration: const InputDecoration(
+                  hintText: "Add task for today",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 2, color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  minimumSize: const Size(250, 50),
+                  maximumSize: const Size(250, 50),
+                ),
+                onPressed: () async {
+                  _selectedTime = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                },
+                child: const Text("Select Time"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Add"),
+              onPressed: () {
+                setState(() {
+                  if (_taskController.text.isNotEmpty) {
+                    todosList.add(ToDo(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        todoText: _taskController.text,
+                        taskTime: _selectedTime));
+                    _taskController.clear();
+                    Navigator.of(context).pop();
+                  }
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// app left side bar
+Widget appSidebar() {
+  return Drawer(
+    child: ListView(
+      // Important: Remove any padding from the ListView.
+      padding: EdgeInsets.zero,
+      children: [
+        const UserAccountsDrawerHeader(
+          // <-- SEE HERE
+          decoration: BoxDecoration(color: tdBGColor),
+          accountName: Text(
+            "Mahdi Islam",
+            style: TextStyle(
+              color: tdBlack,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          accountEmail: Text(
+            "mahdiprantoblog@gmail.com",
+            style: TextStyle(
+              color: tdGrey,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          currentAccountPicture:
+              Image(image: AssetImage("assets/images/avatar.png")),
+        ),
+        ListTile(
+          leading: const Icon(
+            Icons.home,
+          ),
+          title: const Text(
+            'Page 1',
+          ),
+          onTap: () {},
+        ),
+        ListTile(
+          leading: const Icon(
+            Icons.train,
+          ),
+          title: const Text('Page 2'),
+          onTap: () {},
+        ),
+      ],
+    ),
+  );
 }
 
 Widget searchBox() {
