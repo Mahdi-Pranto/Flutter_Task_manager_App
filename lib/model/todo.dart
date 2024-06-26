@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mytodoapp/screens/todo_item.dart';
 
 class ToDo {
   String? id;

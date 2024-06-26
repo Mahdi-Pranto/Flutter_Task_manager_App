@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mytodoapp/constraints/colors.dart';
+
 import 'package:mytodoapp/screens/home.dart';
 
 void main() {
