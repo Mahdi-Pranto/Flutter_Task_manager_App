@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mytodoapp/constraints/colors.dart';
 import 'package:mytodoapp/model/todo.dart';
@@ -12,9 +13,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final todosList = ToDo.todoList();
+  List<ToDo> todosList = [];
   final TextEditingController _taskController = TextEditingController();
   TimeOfDay? _selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTasks();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +61,26 @@ class _HomeState extends State<Home> {
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.w500)),
                 ),
-                for (ToDo todo in todosList)
-                  TodoItem(
-                    todo: todo,
-                    onDeleteItem: _deleteTask,
-                    onToggleDone: _toggleDone,
-                  ),
+
+                // check if no task has been created
+                if (todosList.isEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(top: 20),
+                    child: const Center(
+                      child: Text(
+                        "No tasks available today. Add a new task!",
+                        style: TextStyle(fontSize: 18, color: tdGrey),
+                      ),
+                    ),
+                  )
+                else
+                  // get all the task
+                  for (ToDo todo in todosList)
+                    TodoItem(
+                      todo: todo,
+                      onDeleteItem: _deleteTask,
+                      onToggleDone: _toggleDone,
+                    ),
               ],
             ),
           ),
@@ -68,10 +89,29 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? tasksJson = prefs.getString('tasks');
+    if (tasksJson != null) {
+      final List<dynamic> tasksList = json.decode(tasksJson);
+      setState(() {
+        todosList = tasksList.map((json) => ToDo.fromJson(json)).toList();
+      });
+    }
+  }
+
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String tasksJson =
+        json.encode(todosList.map((task) => task.toJson()).toList());
+    await prefs.setString('tasks', tasksJson);
+  }
+
   void _deleteTask(String id) {
     setState(() {
       todosList.removeWhere((todo) => todo.id == id);
     });
+    _saveTasks();
   }
 
   void _toggleDone(String id) {
@@ -79,6 +119,7 @@ class _HomeState extends State<Home> {
       final todo = todosList.firstWhere((todo) => todo.id == id);
       todo.isDone = !todo.isDone!;
     });
+    _saveTasks();
   }
 
   AppBar _buildAppBar() {
@@ -118,7 +159,7 @@ class _HomeState extends State<Home> {
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 2, color: Colors.grey),
+                    side: const BorderSide(width: 2, color: Colors.blue),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   minimumSize: const Size(250, 50),
@@ -150,8 +191,10 @@ class _HomeState extends State<Home> {
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         todoText: _taskController.text,
                         taskTime: _selectedTime));
+
                     _taskController.clear();
                     Navigator.of(context).pop();
+                    _saveTasks();
                   }
                 });
               },
